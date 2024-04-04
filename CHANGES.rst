@@ -30,6 +30,9 @@ Features added
 * #11981: Improve rendering of signatures using ``slice`` syntax,
   e.g., ``def foo(arg: np.float64[:,:]) -> None: ...``.
 
+* #11980: extlinks: Allow captions without '%s' substitution. Patch by Nicolas
+  Peugnet.
+
 Bugs fixed
 ----------
 

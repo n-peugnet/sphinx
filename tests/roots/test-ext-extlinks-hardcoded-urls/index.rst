@@ -26,3 +26,7 @@ https://github.com/sphinx-doc/sphinx/pulls/1
 
 .. _replaceable link: https://github.com/sphinx-doc/sphinx/issues/1
 .. _non-replaceable link: https://github.com/sphinx-doc/sphinx/pulls/1
+
+.. Extlinks with non-formatted caption should not produce warnings.
+
+:wikipedia:`Sphinx`

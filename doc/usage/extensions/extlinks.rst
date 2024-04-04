@@ -37,12 +37,13 @@ The extension adds a config value:
    The link caption depends on the second item in the tuple, the *caption*:
 
    - If *caption* is ``None``, the link caption is the full URL.
-   - If *caption* is a string, then it must contain ``%s`` exactly once.  In
+   - If *caption* is a string, then it can contain an optional ``%s``.  In
      this case the link caption is *caption* with the partial URL substituted
      for ``%s`` -- in the above example, the link caption would be
      ``issue 123``.
 
-   To produce a literal ``%`` in either *base URL* or *caption*, use ``%%``::
+   To produce a literal ``%`` in *base URL* or in a *caption* that contains a
+   ``%s``, use ``%%``::
 
       extlinks = {'KnR': ('https://example.org/K%%26R/page/%s',
                             '[K&R; page %s]')}
@@ -54,6 +55,10 @@ The extension adds a config value:
    .. versionchanged:: 4.0
 
       Support to substitute by '%s' in the caption.
+
+   .. versionchanged:: 7.3
+
+      Allow caption without '%s' substitution.
 
 .. note::
 

@@ -39,6 +39,9 @@ if TYPE_CHECKING:
     from sphinx.application import Sphinx
     from sphinx.util.typing import RoleFunction
 
+FORMAT_NONE   = 0
+FORMAT_PRINTF = 1
+
 logger = logging.getLogger(__name__)
 
 
@@ -95,6 +98,14 @@ def make_link_role(name: str, base_url: str, caption: str) -> RoleFunction:
     # a prefix.
     # Remark: It is an implementation detail that we use Pythons %-formatting.
     # So far we only expose ``%s`` and require quoting of ``%`` using ``%%``.
+
+    if caption is None:
+        caption_format = None
+    elif re.search(r'%s', caption) is None:
+        caption_format = FORMAT_NONE
+    else:
+        caption_format = FORMAT_PRINTF
+
     def role(typ: str, rawtext: str, text: str, lineno: int,
              inliner: Inliner, options: dict[str, Any] | None = None,
              content: Sequence[str] = (),
@@ -105,6 +116,8 @@ def make_link_role(name: str, base_url: str, caption: str) -> RoleFunction:
         if not has_explicit_title:
             if caption is None:
                 title = full_url
+            elif caption_format == FORMAT_NONE:
+                title = caption
             else:
                 title = caption % part
         pnode = nodes.reference(title, title, internal=False, refuri=full_url)
