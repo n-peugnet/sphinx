@@ -46,6 +46,11 @@ class Parser(docutils.parsers.Parser):
         self.config = app.config
         self.env = app.env
 
+    def parse_inline(self, inputstring: str, document: nodes.document) -> None:
+        """Parse the inline elements of a text block and generate a document tree."""
+        msg = 'Parser subclasses must implement parse_inline'
+        raise NotImplementedError(msg)
+
 
 class RSTParser(docutils.parsers.rst.Parser, Parser):
     """A reST parser for Sphinx."""
@@ -59,6 +64,25 @@ class RSTParser(docutils.parsers.rst.Parser, Parser):
         transforms = super().get_transforms()
         transforms.remove(SmartQuotes)
         return transforms
+
+    def parse_inline(self, inputstring: str, document: nodes.document) -> None:
+        """Parse inline syntax from text and generate a document tree."""
+        # Avoid "Literal block expected; none found." warnings.
+        if inputstring.endswith('::'):
+            inputstring = inputstring[:-1]
+
+        self.setup_parse(inputstring, document)
+        self.statemachine = states.RSTStateMachine(
+            state_classes=self.state_classes,
+            initial_state='Text',
+            debug=document.reporter.debug_flag,
+        )
+
+        inputlines = StringList([inputstring], document.current_source)
+
+        self.decorate(inputlines)
+        self.statemachine.run(inputlines, document, inliner=self.inliner)
+        self.finish_parse()
 
     def parse(self, inputstring: str | StringList, document: nodes.document) -> None:
         """Parse text and generate a document tree."""
